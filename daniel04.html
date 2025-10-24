@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unidad 2 - Calculadora</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredericka+the+Great&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+    integrity="sha384-50oBUHEmvpQ+1lW4y5PTFmhCaXp0Ml5d60M17uH2+nqUivzIebhndOJK28anvf"
+    crossorigin="anonymous">
+
+  <style>
+    :root {
+      --azul-marino: #07037c;
+      --rojo-acento: #fb2015;
+      --fondo: #928f8f;
+      --texto: #ffffff;
+      --naranja: #ff9800;
+      --naranja-oscuro: #e65100;
+      --negro: #000000;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: var(--fondo);
+      color: var(--texto);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Menú superior */
+    nav {
+      background-color: var(--azul-marino);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 18px;
+    }
+
+    nav ul li {
+      position: relative;
+    }
+
+    nav ul li a {
+      font-family: 'Fredericka the Great', cursive;
+      font-weight: bold;
+      font-size: 1.2rem;
+      padding: 8px 14px;
+      text-decoration: none;
+      color: var(--texto);
+      display: block;
+    }
+
+    nav ul li a:hover {
+      color: var(--rojo-acento);
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--azul-marino);
+      border-radius: 8px;
+      padding: 10px 0;
+      min-width: 220px;
+      z-index: 1000;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 10px 18px;
+      font-family: 'Fredericka the Great', cursive;
+      color: var(--texto);
+      text-decoration: none;
+      font-size: 1.1rem;
+    }
+
+    .dropdown-content a:hover {
+      color: var(--rojo-acento);
+      background-color: rgba(251,32,21,0.2);
+    }
+
+    /* Contenedor principal */
+    .content {
+      max-width: 900px;
+      margin: 40px auto;
+      background-color: rgba(7,3,124,0.8);
+      border-radius: 25px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      flex: 1;
+    }
+
+    h1 {
+      font-family: 'Fredericka the Great', cursive;
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: var(--texto);
+    }
+
+    /* Calculadora */
+    .calc {
+      margin-top: 20px;
+    }
+
+    .calc input[type="text"] {
+      width: 280px;
+      height: 50px;
+      text-align: right;
+      margin-bottom: 15px;
+      font-size: 1.5rem;
+      padding: 0 10px;
+      border-radius: 8px;
+      border: 2px solid var(--naranja);
+      background-color: var(--negro);
+      color: var(--texto);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+
+    .btn {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      max-width: 280px;
+      margin: 0 auto;
+    }
+
+    .btn input[type="button"] {
+      width: 100%;
+      height: 60px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      border-radius: 10px;
+      border: none;
+      background-color: var(--naranja);
+      color: var(--negro);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+
+    .btn input[type="button"]:hover {
+      background-color: var(--naranja-oscuro);
+      transform: translateY(-2px);
+    }
+
+    .btn input[value="="] {
+      background-color: var(--rojo-acento);
+      color: white;
+      grid-column: span 2;
+    }
+
+    .btn input[value="="]:hover {
+      background-color: #e01a10;
+    }
+
+    .btn input[value="C"] {
+      background-color: #ff5722;
+      color: white;
+    }
+
+    .btn input[value="C"]:hover {
+      background-color: #e64a19;
+    }
+
+    /* Botón flotante */
+    .perfil-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: var(--rojo-acento);
+      color: white;
+      font-family: 'Fredericka the Great', cursive;
+      font-weight: bold;
+      font-size: 1.1rem;
+      padding: 12px 22px;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .perfil-btn:hover {
+      background-color: #e01a10;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .perfil-btn i {
+      font-size: 1.3rem;
+    }
+
+    /* Responsivo */
+    @media (max-width: 780px) {
+      .content {
+        padding: 25px;
+        margin: 20px auto;
+      }
+      h1 { font-size: 2.2rem; }
+      .calc input[type="text"] {
+        width: 100%;
+        max-width: 250px;
+        font-size: 1.3rem;
+      }
+      .btn input[type="button"] {
+        height: 50px;
+        font-size: 1.1rem;
+      }
+      nav ul { gap: 12px; }
+      nav ul li a { font-size: 1rem; padding: 6px 10px; }
+      .dropdown-content { min-width: 180px; }
+      .dropdown-content a { font-size: 1rem; padding: 8px 14px; }
+      .perfil-btn {
+        font-size: 1rem;
+        padding: 10px 16px;
+        bottom: 20px;
+        right: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Menú estandarizado -->
+  <nav>
+    <ul>
+      <li><a href="index.html">Inicio</a></li>
+
+      <!-- Unidad 1 -->
+      <li class="dropdown">
+        <a href="#">Unidad 1 Ciberseguridad</a>
+        <div class="dropdown-content">
+          <a href="daniel02.html">Conceptos</a>
+          <a href="daniel03.html">Ataques</a>
+          <a href="proteccion.html">Protección</a>
+        </div>
+      </li>
+
+      <!-- Unidad 2 -->
+      <li class="dropdown">
+        <a href="#">Unidad 2 Aplicaciones Web</a>
+        <div class="dropdown-content">
+          <a href="daniel04.html">Calculadora</a>
+          <a href="daniel05.html">Películas</a>
+          <a href="daniel06.html">Catálogo de Productos</a>
+        </div>
+      </li>
+
+      <!-- Unidad 3 -->
+      <li class="dropdown">
+        <a href="#">Unidad 3</a>
+        <div class="dropdown-content">
+          <a href="#">Conceptos</a>
+          <a href="#">Ataques</a>
+          <a href="#">Protección</a>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="content">
+    <h1>Calculadora Web</h1>
+    <p style="font-size: 1.2rem; margin-bottom: 20px;">Usa los botones para realizar operaciones</p>
+
+    <div class="calc">
+      <input type="text" id="ans" placeholder="0" readonly />
+
+      <div class="btn">
+        <input type="button" value="C" onclick="Clear()">
+        <input type="button" value="%" onclick="Solve('%')">
+        <input type="button" value="Backspace" onclick="Solve('Backspace')">
+        <input type="button" value="/" onclick="Solve('/')">
+
+        <input type="button" value="7" onclick="Solve('7')">
+        <input type="button" value="8" onclick="Solve('8')">
+        <input type="button" value="9" onclick="Solve('9')">
+        <input type="button" value="x" onclick="Solve('*')">
+
+        <input type="button" value="4" onclick="Solve('4')">
+        <input type="button" value="5" onclick="Solve('5')">
+        <input type="button" value="6" onclick="Solve('6')">
+        <input type="button" value="-" onclick="Solve('-')">
+
+        <input type="button" value="1" onclick="Solve('1')">
+        <input type="button" value="2" onclick="Solve('2')">
+        <input type="button" value="3" onclick="Solve('3')">
+        <input type="button" value="+" onclick="Solve('+')">
+
+        <input type="button" value="00" onclick="Solve('00')">
+        <input type="button" value="0" onclick="Solve('0')">
+        <input type="button" value="." onclick="Solve('.')">
+        <input type="button" value="=" onclick="Solve('=')">
+      </div>
+    </div>
+  </div>
+
+  <!-- Botón flotante -->
+  <a href="perfil.html" class="perfil-btn">
+    <i class="fas fa-user"></i> Perfil
+  </a>
+
+  <script>
+    function Solve(val) {
+      let ans = document.getElementById("ans");
+
+      if (val === "=") {
+        try {
+          let expression = ans.value
+            .replace(/x/g, "*")
+            .replace(/,/g, ".");
+          ans.value = eval(expression);
+        } catch (e) {
+          ans.value = "Error";
+        }
+      } else if (val === "Backspace") {
+        ans.value = ans.value.slice(0, -1);
+      } else if (val === "%") {
+        try {
+          if (ans.value) {
+            let expression = ans.value.replace(/x/g, "*").replace(/,/g, ".");
+            ans.value = eval(expression) / 100;
+          }
+        } catch (e) {
+          ans.value = "Error";
+        }
+      } else {
+        ans.value += val;
+      }
+    }
+
+    function Clear() {
+      document.getElementById("ans").value = "";
+    }
+  </script>
+</body>
+</html>

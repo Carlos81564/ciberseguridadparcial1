@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador de Películas</title>
+
+  <!-- Fuentes -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@900&family=Fredericka+the+Great&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+    integrity="sha384-50oBUHEmvpQ+1lW4y5PTFmhCaXp0Ml5d60M17uH2+nqUivzIebhndOJK28anvf"
+    crossorigin="anonymous">
+
+  <style>
+    :root {
+      --azul-oscuro: #0a1a3f;
+      --azul-medio: #1e40af;
+      --azul-neon: #00d4ff;
+      --verde-neon: #39ff14;
+      --blanco: #f8faff;
+      --card-bg: rgba(10, 26, 63, 0.7);
+      --sombra-azul: 0 0 25px rgba(0, 212, 255, 0.4);
+      --sombra-verde: 0 0 25px rgba(57, 255, 20, 0.4);
+      --azul-marino: #07037c;
+      --rojo-acento: #fb2015;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: radial-gradient(circle at center, #0f1a2e 0%, #000814 100%);
+      font-family: 'Inter', sans-serif;
+      color: var(--blanco);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Fondo animado con estrellas */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle fill="%23ffffff" opacity="0.08" cx="50" cy="50" r="1"/></svg>') repeat;
+      background-size: 40px;
+      animation: stars 150s linear infinite;
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    @keyframes stars {
+      from { transform: translateY(0); }
+      to { transform: translateY(-1200px); }
+    }
+
+    /* === BARRA DE NAVEGACIÓN SENCILLA === */
+    nav {
+      background: linear-gradient(135deg, var(--azul-marino), #3f51b5);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 18px;
+    }
+
+    nav ul li {
+      position: relative;
+    }
+
+    nav ul li a {
+      font-family: 'Fredericka the Great', cursive;
+      font-weight: bold;
+      font-size: 1.2rem;
+      padding: 8px 14px;
+      text-decoration: none;
+      color: white;
+      display: block;
+      transition: color 0.3s ease;
+    }
+
+    nav ul li a:hover {
+      color: var(--rojo-acento);
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--azul-marino);
+      border-radius: 8px;
+      padding: 10px 0;
+      min-width: 220px;
+      z-index: 1000;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 10px 18px;
+      font-family: 'Fredericka the Great', cursive;
+      color: white;
+      text-decoration: none;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+    }
+
+    .dropdown-content a:hover {
+      color: var(--rojo-acento);
+      background-color: rgba(251,32,21,0.2);
+    }
+    /* === FIN DE BARRA SENCILLA === */
+
+    /* Título épico */
+    .hero-title {
+      text-align: center;
+      margin: 70px 0 20px;
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 5.5rem;
+      background: linear-gradient(45deg, var(--blanco), var(--azul-neon), var(--verde-neon));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 35px rgba(0, 212, 255, 0.6);
+      animation: glowBlue 2.5s ease-in-out infinite alternate;
+      letter-spacing: 2px;
+    }
+
+    @keyframes glowBlue {
+      from { text-shadow: 0 0 25px rgba(0, 212, 255, 0.5), 0 0 40px rgba(57, 255, 20, 0.3); }
+      to { text-shadow: 0 0 50px rgba(0, 212, 255, 0.8), 0 0 70px rgba(57, 255, 20, 0.6); }
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 1.35rem;
+      color: var(--azul-neon);
+      margin-bottom: 45px;
+      font-weight: 300;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    /* Búsqueda */
+    .search-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 60px;
+      position: relative;
+    }
+
+    #search {
+      width: 520px;
+      max-width: 92%;
+      padding: 20px 70px 20px 28px;
+      font-size: 1.25rem;
+      background: rgba(10, 26, 63, 0.85);
+      border: 2px solid transparent;
+      border-radius: 60px;
+      color: var(--blanco);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4), inset 0 0 18px rgba(0, 212, 255, 0.15);
+      transition: all 0.5s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    #search:focus {
+      outline: none;
+      border-color: var(--verde-neon);
+      box-shadow: 0 0 35px rgba(57, 255, 20, 0.7), 0 10px 40px rgba(0, 0, 0, 0.5);
+      transform: scale(1.03);
+    }
+
+    #search::placeholder {
+      color: #88c0ff;
+      font-style: italic;
+    }
+
+    .search-btn {
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: var(--verde-neon);
+      color: #000;
+      border: none;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      font-size: 1.4rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      box-shadow: 0 0 25px rgba(57, 255, 20, 0.6);
+    }
+
+    .search-btn:hover {
+      background: var(--blanco);
+      color: var(--verde-neon);
+      transform: translateY(-50%) scale(1.15);
+      box-shadow: 0 0 40px rgba(57, 255, 20, 0.9);
+    }
+
+    /* Películas */
+    .movies {
+      display: 1fr;
+      gap: 35px;
+      padding: 25px;
+      perspective: 1200px;
+    }
+
+    .movie {
+      position: relative;
+      background: var(--card-bg);
+      border-radius: 22px;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0, 212, 255, 0.3);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6);
+      transition: all 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
+    }
+
+    .movie:hover {
+      transform: translateY(-25px) rotateX(6deg) scale(1.06);
+      box-shadow: 0 35px 70px rgba(0, 212, 255, 0.5), 0 0 50px rgba(57, 255, 20, 0.4);
+      z-index: 10;
+    }
+
+    .movie img {
+      width: 100%;
+      height: 460px;
+      object-fit: cover;
+      border-bottom: 4px solid var(--verde-neon);
+      transition: all 0.6s ease;
+    }
+
+    .movie:hover img {
+      filter: brightness(1.25) contrast(1.15) saturate(1.1);
+    }
+
+    .movie-info {
+      padding: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(to top, rgba(10,26,63,0.95), transparent);
+    }
+
+    .movie-info h3 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 600;
+      color: var(--azul-neon);
+      text-shadow: 0 0 12px rgba(0, 212, 255, 0.6);
+      max-width: 70%;
+      line-height: 1.3;
+    }
+
+    .movie-info span {
+      background: var(--verde-neon);
+      color: #000;
+      padding: 10px 16px;
+      border-radius: 50px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      box-shadow: 0 0 20px rgba(57, 255, 20, 0.7);
+    }
+
+    .overview {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(10,10,30,0.98), transparent);
+      color: var(--blanco);
+      padding: 35px 22px 22px;
+      max-height: 100%;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.6s ease;
+      backdrop-filter: blur(10px);
+      border-top: 1px solid rgba(0, 212, 255, 0.2);
+    }
+
+    .overview h3 {
+      color: var(--blanco);
+      font-family: 'Cinzel Decorative', cursive;
+      font-size: 1.6rem;
+      margin-bottom: 14px;
+      text-align: center;
+      text-shadow: 0 0 18px rgba(248, 250, 255, 0.7);
+    }
+
+    .overview p {
+      font-size: 0.98rem;
+      line-height: 1.75;
+      text-align: justify;
+      color: #cce5ff;
+    }
+
+    .movie:hover .overview {
+      transform: translateY(0);
+    }
+
+    /* Holograma */
+    .movie::after {
+      content: '';
+      position: absolute;
+      top: -60%;
+      left: -60%;
+      width: 220%;
+      height: 220%;
+      background: linear-gradient(45deg, transparent, rgba(0, 212, 255, 0.08), rgba(57, 255, 20, 0.06), transparent);
+      transform: rotate(45deg);
+      transition: 1.2s;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .movie:hover::after {
+      opacity: 1;
+      animation: hologram 2.5s linear infinite;
+    }
+
+    @keyframes hologram {
+      0% { transform: translateX(-120%) translateY(-120%) rotate(45deg); }
+      100% { transform: translateX(120%) translateY(120%) rotate(45deg); }
+    }
+
+    /* Botón flotante */
+    .perfil-btn {
+      position: fixed;
+      bottom: 35px;
+      right: 35px;
+      background: linear-gradient(45deg, var(--verde-neon), #32cd32);
+      color: #000;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: bold;
+      font-size: 1.15rem;
+      padding: 18px 32px;
+      border-radius: 60px;
+      text-decoration: none;
+      box-shadow: 0 0 35px rgba(57, 255, 20, 0.8);
+      transition: all 0.5s ease;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .perfil-btn:hover {
+      transform: translateY(-6px) scale(1.08);
+      box-shadow: 0 0 60px rgba(57, 255, 20, 0.9), 0 0 90px rgba(0, 212, 255, 0.5);
+      background: linear-gradient(45deg, #32cd32, var(--verde-neon));
+      color: white;
+    }
+
+    .perfil-btn i {
+      font-size: 1.5rem;
+      animation: pulseGreen 2s infinite;
+    }
+
+    @keyframes pulseGreen {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-title { font-size: 3.2rem; }
+      #search { width: 100%; font-size: 1.15rem; padding: 18px 60px 18px 24px; }
+      .search-btn { width: 50px; height: 50px; font-size: 1.2rem; }
+      .movies { grid-template-columns: 1fr; gap: 28px; }
+      .movie img { height: 400px; }
+      nav ul { gap: 12px; }
+      nav ul li a { font-size: 0.98rem; padding: 8px 14px; }
+      .perfil-btn {
+        font-size: 1rem;
+        padding: 14px 24px;
+        bottom: 25px;
+        right: 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BARRA DE NAVEGACIÓN SENCILLA -->
+  <nav>
+    <ul>
+      <li><a href="index.html">Inicio</a></li>
+      <li class="dropdown">
+        <a href="#">Unidad 1 Ciberseguridad</a>
+        <div class="dropdown-content">
+          <a href="daniel02.html">Conceptos</a>
+          <a href="daniel03.html">Ataques</a>
+          <a href="proteccion.html">Protección</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#">Unidad 2 Aplicaciones Web</a>
+        <div class="dropdown-content">
+          <a href="daniel04.html">Calculadora</a>
+          <a href="daniel05.html">Películas</a>
+          <a href="daniel06.html">Catálogo de Productos</a>
+        </div>
+      </li>
+      <li class="dropdown">
+        <a href="#">Unidad 3</a>
+        <div class="dropdown-content">
+          <a href="#">Conceptos</a>
+          <a href="#">Ataques</a>
+          <a href="#">Protección</a>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Contenido Épico -->
+  <div style="padding: 20px;">
+    <h1 class="hero-title">CINEVERSE</h1>
+    <p class="subtitle">Descubre la magia del cine</p>
+
+    <div class="search-container">
+      <input type="text" id="search" placeholder="Busca tu próxima película...">
+      <button class="search-btn" onclick="document.getElementById('form').dispatchEvent(new Event('submit'))">
+        Search
+      </button>
+    </div>
+
+    <main id="main" class="movies"></main>
+  </div>
+
+  <!-- Botón Perfil -->
+  <a href="perfil.html" class="perfil-btn">
+    <i class="fas fa-user-astronaut"></i> Perfil
+  </a>
+
+  <!-- JavaScript (sin cambios) -->
+  <script>
+    const API_KEY = '3fd2be6f0c70a2a598f084ddfb75487c';
+    const API_URL = `https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=${API_KEY}&language=es-ES`;
+    const SEARCH_API = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=es-ES&query=`;
+    const IMG_PATH = 'https://image.tmdb.org/t/p/w1280';
+
+    const main = document.getElementById('main');
+    const form = document.createElement('form');
+    form.id = 'form';
+    form.style.display = 'none';
+    document.body.appendChild(form);
+
+    getMovies(API_URL);
+
+    async function getMovies(url) {
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        showMovies(data.results);
+      } catch (error) {
+        main.innerHTML = `<p style="text-align:center; color:#ff6b6b; font-size:1.2rem; grid-column:1/-1;">Error de conexión. Intenta más tarde.</p>`;
+      }
+    }
+
+    function showMovies(movies) {
+      main.innerHTML = '';
+      if (movies.length === 0) {
+        main.innerHTML = `<p style="text-align:center; color:#88c0ff; grid-column:1/-1; font-size:1.2rem;">No se encontraron películas.</p>`;
+        return;
+      }
+
+      movies.forEach((movie) => {
+        const { title, poster_path, vote_average, overview } = movie;
+        if (!poster_path) return;
+
+        const movieEl = document.createElement('div');
+        movieEl.classList.add('movie');
+        movieEl.innerHTML = `
+          <img src="${IMG_PATH + poster_path}" alt="${title}">
+          <div class="movie-info">
+            <h3>${title}</h3>
+            <span>${vote_average.toFixed(1)}</span>
+          </div>
+          <div class="overview">
+            <h3>Sinopsis</h3>
+            <p>${overview || 'Sin descripción disponible.'}</p>
+          </div>
+        `;
+        main.appendChild(movieEl);
+      });
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const term = document.getElementById('search').value.trim();
+      if (term) {
+        getMovies(SEARCH_API + encodeURIComponent(term));
+        document.getElementById('search').value = '';
+      } else {
+        getMovies(API_URL);
+      }
+    });
+  </script>
+</body>
+</html>

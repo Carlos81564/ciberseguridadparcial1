@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unidad 1 - Protección</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredericka+the+Great&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+    integrity="sha384-50oBUHEmvpQ+1lW4y5PTFmhCaXp0Ml5d60M17uH2+nqUivzIebhndOJK28anvf"
+    crossorigin="anonymous">
+
+  <style>
+    :root {
+      --azul-marino: #07037c;
+      --rojo-acento: #fb2015;
+      --fondo: #928f8f;
+      --texto: #ffffff;
+      --blanco: #ffffff;
+      --texto-oscuro: #2c3e50;
+      --acento: #00bcd4;
+      --sombra: rgba(0, 0, 0, 0.1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--fondo);
+      font-family: 'Inter', sans-serif;
+      color: var(--texto-oscuro);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Menú superior */
+    nav {
+      background: linear-gradient(135deg, var(--azul-marino), #3f51b5);
+      padding: 12px 20px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      width: 100%;
+      box-shadow: 0 4px 10px var(--sombra);
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 18px;
+    }
+
+    nav ul li {
+      position: relative;
+    }
+
+    nav ul li a {
+      font-family: 'Fredericka the Great', cursive;
+      font-weight: bold;
+      font-size: 1.2rem;
+      padding: 8px 14px;
+      text-decoration: none;
+      color: var(--texto);
+      display: block;
+    }
+
+    nav ul li a:hover {
+      color: var(--rojo-acento);
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background: var(--azul-marino);
+      border-radius: 8px;
+      padding: 10px 0;
+      min-width: 220px;
+      z-index: 1000;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+
+    .dropdown-content a {
+      display: block;
+      padding: 10px 18px;
+      font-family: 'Fredericka the Great', cursive;
+      color: var(--texto);
+      text-decoration: none;
+      font-size: 1.1rem;
+    }
+
+    .dropdown-content a:hover {
+      color: var(--rojo-acento);
+      background-color: rgba(251,32,21,0.2);
+    }
+
+    /* Contenido principal */
+    .content {
+      max-width: 1200px;
+      margin: 50px auto;
+      background-color: var(--blanco);
+      border-radius: 25px;
+      padding: 40px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      color: var(--texto-oscuro);
+    }
+
+    h1 {
+      text-align: center;
+      margin: 0 0 30px;
+      font-weight: 700;
+      color: var(--azul-marino);
+      font-size: 2.2rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* Tabla personalizada */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--blanco);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      margin-bottom: 40px;
+    }
+
+    thead {
+      background: var(--azul-marino);
+      color: white;
+    }
+
+    th {
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+      padding: 15px 12px;
+      text-align: left;
+    }
+
+    td {
+      padding: 15px 12px;
+      vertical-align: middle;
+      font-size: 0.95rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    tbody tr:hover {
+      background-color: #f0f4ff;
+      transition: background 0.3s ease;
+    }
+
+    td strong {
+      color: var(--azul-marino);
+    }
+
+    td em {
+      color: var(--acento);
+      font-style: italic;
+    }
+
+    td img {
+      width: 70px;
+      height: 70px;
+      object-fit: contain;
+      border-radius: 8px;
+      padding: 5px;
+      background: #f8f9fa;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    /* Botón flotante */
+    .perfil-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: var(--rojo-acento);
+      color: white;
+      font-family: 'Fredericka the Great', cursive;
+      font-weight: bold;
+      font-size: 1.1rem;
+      padding: 12px 22px;
+      border-radius: 50px;
+      text-decoration: none;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .perfil-btn:hover {
+      background-color: #e01a10;
+      transform: translateY(-3px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .perfil-btn i {
+      font-size: 1.3rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 780px) {
+      .content {
+        padding: 25px;
+        margin: 30px auto;
+      }
+      h1 { font-size: 1.8rem; }
+      table { font-size: 0.9rem; }
+      td img { width: 50px; height: 50px; }
+      nav ul { gap: 12px; }
+      nav ul li a { font-size: 1rem; padding: 6px 10px; }
+      .dropdown-content { min-width: 180px; }
+      .dropdown-content a { font-size: 1rem; padding: 8px 14px; }
+      .perfil-btn {
+        font-size: 1rem;
+        padding: 10px 16px;
+        bottom: 20px;
+        right: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Menú estandarizado -->
+  <nav>
+    <ul>
+      <li><a href="index.html">Inicio</a></li>
+
+      <!-- Unidad 1 -->
+      <li class="dropdown">
+        <a href="#">Unidad 1 Ciberseguridad</a>
+        <div class="dropdown-content">
+          <a href="daniel02.html">Conceptos</a>
+          <a href="daniel03.html">Ataques</a>
+          <a href="proteccion.html">Protección</a>
+        </div>
+      </li>
+
+      <!-- Unidad 2 -->
+      <li class="dropdown">
+        <a href="#">Unidad 2 Aplicaciones Web</a>
+        <div class="dropdown-content">
+          <a href="daniel04.html">Calculadora</a>
+          <a href="daniel05.html">Películas</a>
+          <a href="daniel06.html">Catálogo de Productos</a>
+        </div>
+      </li>
+
+      <!-- Unidad 3 -->
+      <li class="dropdown">
+        <a href="#">Unidad 3</a>
+        <div class="dropdown-content">
+          <a href="#">Conceptos</a>
+          <a href="#">Ataques</a>
+          <a href="#">Protección</a>
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="content">
+    <h1>Medidas de Protección en Ciberseguridad</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Método</th>
+          <th>Descripción</th>
+          <th>Ventaja Principal</th>
+          <th>Ejemplo Práctico</th>
+          <th>Icono</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-seguridad"></tbody>
+    </table>
+  </div>
+
+  <!-- Botón flotante -->
+  <a href="perfil.html" class="perfil-btn">
+    <i class="fas fa-user"></i> Perfil
+  </a>
+
+  <script>
+    const defensas = [
+      {
+        metodo: "Antivirus Avanzado",
+        descripcion: "Programa que identifica, bloquea y elimina software malicioso en tiempo real.",
+        ventaja: "Detección proactiva de amenazas conocidas y emergentes.",
+        ejemplo: "Bitdefender o Kaspersky con análisis en la nube.",
+        imagen: "https://img.icons8.com/color/96/000000/antivirus.png"
+      },
+      {
+        metodo: "Firewall de Nueva Generación",
+        descripcion: "Filtra el tráfico de red según reglas avanzadas y comportamiento.",
+        ventaja: "Bloquea conexiones sospechosas antes de que lleguen al equipo.",
+        ejemplo: "pfSense o el firewall integrado en routers modernos.",
+        imagen: "https://img.icons8.com/color/96/000000/firewall.png"
+      },
+      {
+        metodo: "Autenticación Multifactor (MFA)",
+        descripcion: "Requiere múltiples formas de verificación para acceder a una cuenta.",
+        ventaja: "Imposibilita el acceso con solo la contraseña robada.",
+        ejemplo: "YubiKey + app como Authy o Microsoft Authenticator.",
+        imagen: "https://img.icons8.com/color/96/000000/two-factor-authentication.png"
+      },
+      {
+        metodo: "Cifrado de Datos",
+        descripcion: "Transforma la información en código ilegible sin la clave correcta.",
+        ventaja: "Protege datos en reposo y en tránsito.",
+        ejemplo: "BitLocker en Windows o FileVault en macOS.",
+        imagen: "https://img.icons8.com/color/96/000000/lock.png"
+      },
+      {
+        metodo: "Parches y Actualizaciones",
+        descripcion: "Corrección periódica de vulnerabilidades en software y sistemas.",
+        ventaja: "Elimina puertas de entrada conocidas para atacantes.",
+        ejemplo: "Actualizaciones automáticas de Chrome o iOS.",
+        imagen: "https://img.icons8.com/color/96/000000/update.png"
+      },
+      {
+        metodo: "Backups Automatizados",
+        descripcion: "Copia periódica de datos en ubicaciones externas y seguras.",
+        ventaja: "Recuperación total ante ransomware o fallos.",
+        ejemplo: "Backblaze o Time Machine con disco externo.",
+        imagen: "https://img.icons8.com/color/96/000000/backup.png"
+      },
+      {
+        metodo: "Formación en Conciencia Digital",
+        descripcion: "Entrenamiento para identificar phishing, ingeniería social y riesgos.",
+        ventaja: "El usuario se convierte en la primera línea de defensa.",
+        ejemplo: "Plataformas como KnowBe4 o talleres internos.",
+        imagen: "https://img.icons8.com/color/96/000000/training.png"
+      }
+    ];
+
+    const tbody = document.getElementById("tabla-seguridad");
+
+    defensas.forEach(item => {
+      const row = `
+        <tr>
+          <td><strong>${item.metodo}</strong></td>
+          <td>${item.descripcion}</td>
+          <td><em>${item.ventaja}</em></td>
+          <td>${item.ejemplo}</td>
+          <td><img src="${item.imagen}" alt="${item.metodo}"></td>
+        </tr>
+      `;
+      tbody.innerHTML += row;
+    });
+  </script>
+</body>
+</html>
